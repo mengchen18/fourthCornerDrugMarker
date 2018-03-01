@@ -1,2 +1,9 @@
-cache
-data
+cache/
+data/
+*.RDA
+*.Rda
+*.rda
+*.RData
+*.RDS
+*.Rds
+*.rds
