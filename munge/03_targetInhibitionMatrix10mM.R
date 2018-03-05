@@ -39,7 +39,29 @@ imat[is.na(imat)] <- 1
 imat <- imat[rowMins(imat) < 0.8, ]
 
 
-targetInhibitMat <- imat
+
+## ====== for xref =====
+xref <- read.xlsx("data/kinobeadScreen/Supplementary Table 1 Inhibitors.xlsx", sheet = 2)
+rn <- make.names(xref$Drug)
+rn[rn == "ONO.4059.analogue"] <- "ONO.4059_analogue"
+rn[rn == "OTS.167"] <- "OTSSP167"
+
+rownames(xref) <- rn
+xref <- xref[colnames(imat), ]
+
+
+l1 <- paste(xref$Designated.targets, xref$Other.targets, sep = ",")
+l1 <- strsplit(l1, ",")
+at <- setdiff(unique(unlist(l1)), "NA")
+pmat <- sapply(l1, function(x) at %in% x)
+pmat <- apply(pmat, 1, as.numeric)
+rownames(pmat) <- rownames(xref)
+colnames(pmat) <- at
+pmat <- data.frame(pmat)
+
+targetInhibitMat <- list(mat = imat, xref = xref, knownTargets = pmat)
+
+
 
 # clear space
 rm(list = setdiff(ls(), c(obj, "targetInhibitMat")))
